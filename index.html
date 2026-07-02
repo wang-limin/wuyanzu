@@ -2,130 +2,176 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>西红柿炒鸡蛋交互式教程</title>
+    <title>家常菜谱切换</title>
     <style>
-        body {
-            background: #fff8f0;
-            font-family: "微软雅黑";
-            max-width: 650px;
-            margin: 40px auto;
-            padding: 0 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .box {
+        body {
+            background-color: #f8f8f8;
+            font-family: "微软雅黑";
+            padding: 40px 20px;
+        }
+        .wrap {
+            max-width: 620px;
+            margin: 0 auto;
             background: #fff;
-            padding: 30px;
-            border-radius: 14px;
-            box-shadow: 0 0 10px #ffd6c0;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px #ddd;
         }
         h1 {
-            color: #e63946;
             text-align: center;
+            color: #222;
+            margin-bottom: 30px;
         }
-        h2 {
-            color: #333;
-            font-size: 19px;
-            margin-top: 30px;
-        }
-        .step-item {
-            line-height: 2;
-            font-size: 16px;
-            margin: 8px 0;
-        }
-        .btn-group {
-            margin: 20px 0;
-            text-align: center;
-        }
-        button {
-            padding: 10px 22px;
+        #switchBtn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            font-size: 17px;
             border: none;
-            border-radius: 8px;
-            background: #e63946;
+            border-radius: 10px;
+            background: #ff4444;
             color: white;
-            font-size: 15px;
-            margin: 0 8px;
             cursor: pointer;
+            margin-bottom: 30px;
         }
-        button:hover {
-            background: #c82333;
+        #switchBtn:hover {
+            background: #dd2222;
         }
-        .tip {
-            margin-top: 20px;
-            padding: 12px;
-            background: #fff0e8;
-            border-radius: 8px;
-            color: #662222;
+        .title {
+            font-size: 22px;
+            color: #c82222;
+            margin-bottom: 18px;
+            text-align: center;
         }
-        .hide {
-            display: none;
+        h3 {
+            margin: 20px 0 8px;
+            color: #333;
+        }
+        ul, ol {
+            line-height: 1.9;
+            padding-left: 22px;
+            color: #444;
         }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>西红柿炒鸡蛋（交互式教程）</h1>
+    <div class="wrap">
+        <h1>一键切换六道家常菜</h1>
+        <button id="switchBtn">点击切换下一道菜</button>
 
-        <div class="btn-group">
-            <button onclick="showFood()">查看食材</button>
-            <button onclick="showStep()">查看制作步骤</button>
-            <button onclick="showTip()">烹饪小技巧</button>
-        </div>
-
-        <!-- 食材区域 -->
-        <div id="foodBox" class="hide">
-            <h2>一、所需食材（勾选确认备齐）</h2>
-            <div class="step-item">
-                <input type="checkbox" id="f1">
-                <label for="f1">西红柿 2个</label>
-            </div>
-            <div class="step-item">
-                <input type="checkbox" id="f2">
-                <label for="f2">鸡蛋 3枚</label>
-            </div>
-            <div class="step-item">
-                <input type="checkbox" id="f3">
-                <label for="f3">小葱、食用盐、白糖、食用油</label>
-            </div>
-        </div>
-
-        <!-- 步骤区域 -->
-        <div id="stepBox" class="hide">
-            <h2>二、详细制作步骤</h2>
-            <ol>
-                <li class="step-item">西红柿切块，小葱切葱花，鸡蛋加盐打散。</li>
-                <li class="step-item">热油下锅炒散鸡蛋，定型后盛出备用。</li>
-                <li class="step-item">锅中少油，下西红柿按压翻炒出汤汁。</li>
-                <li class="step-item">加白糖、食盐调味中和酸味。</li>
-                <li class="step-item">倒回鸡蛋翻炒均匀，撒葱花出锅。</li>
-            </ol>
-        </div>
-
-        <!-- 技巧区域 -->
-        <div id="tipBox" class="hide tip">
-            <h2>三、烹饪小技巧</h2>
-            <p>1. 西红柿顶部划十字烫一下，去皮口感更细腻</p>
-            <p>2. 鸡蛋里加少许清水，炒出来更嫩滑</p>
-            <p>3. 白糖不要多放，只中和番茄酸味即可</p>
+        <div id="box">
+            <div class="title" id="dishName"></div>
+            <h3>所需食材</h3>
+            <ul id="foodList"></ul>
+            <h3>制作步骤</h3>
+            <ol id="stepList"></ol>
         </div>
     </div>
 
     <script>
-        // 切换显示食材
-        function showFood() {
-            document.getElementById("foodBox").classList.remove("hide");
-            document.getElementById("stepBox").classList.add("hide");
-            document.getElementById("tipBox").classList.add("hide");
+        // 6道菜数据
+        const dishList = [
+            {
+                name: "西红柿炒鸡蛋",
+                food: ["西红柿2个", "鸡蛋3枚", "小葱、盐、白糖、食用油"],
+                step: [
+                    "西红柿切块，小葱切葱花，鸡蛋加盐打散",
+                    "热油下入蛋液，定型炒散盛出备用",
+                    "锅中少油放入西红柿按压炒出汤汁",
+                    "加少许白糖、食盐调味",
+                    "倒回鸡蛋翻炒均匀，撒葱花出锅"
+                ]
+            },
+            {
+                name: "酸辣土豆丝",
+                food: ["土豆1个", "干辣椒、大蒜、香醋、食盐"],
+                step: [
+                    "土豆切成细丝，清水浸泡去除淀粉",
+                    "热油爆香蒜末与干辣椒",
+                    "大火快速翻炒土豆丝至断生",
+                    "出锅前淋香醋、加盐拌匀即可"
+                ]
+            },
+            {
+                name: "青椒肉丝",
+                food: ["瘦肉、青椒2个", "生抽、淀粉、大蒜、盐"],
+                step: [
+                    "肉丝加生抽、淀粉抓匀腌制10分钟",
+                    "滑炒肉丝变色后盛出",
+                    "下入青椒翻炒至半熟",
+                    "倒回肉丝调味翻炒均匀出锅"
+                ]
+            },
+            {
+                name: "凉拌黄瓜",
+                food: ["黄瓜1根", "蒜末、香醋、生抽、香油、盐"],
+                step: [
+                    "黄瓜拍碎切成小段",
+                    "加盐腌制5分钟，倒掉析出水分",
+                    "放入蒜末、所有调料拌匀",
+                    "冷藏五分钟口感更佳"
+                ]
+            },
+            {
+                name: "番茄牛腩",
+                food: ["牛腩500g、西红柿3个", "生姜、大葱、冰糖、盐"],
+                step: [
+                    "牛腩冷水下锅焯水，撇去血沫捞出",
+                    "西红柿下锅炒出浓稠汤汁",
+                    "放入牛腩、葱姜小火慢炖1小时",
+                    "加冰糖、食盐调味收汁完成"
+                ]
+            },
+            {
+                name: "清炒油麦菜",
+                food: ["油麦菜一把", "大蒜、食用盐"],
+                step: [
+                    "油麦菜洗净沥干水分",
+                    "热油爆香蒜末",
+                    "大火快速翻炒油麦菜",
+                    "少许盐调味，立刻出锅"
+                ]
+            }
+        ];
+
+        let index = 0;
+        const btn = document.getElementById("switchBtn");
+        const dishName = document.getElementById("dishName");
+        const foodList = document.getElementById("foodList");
+        const stepList = document.getElementById("stepList");
+
+        // 渲染当前菜品
+        function render() {
+            const dish = dishList[index];
+            dishName.innerText = dish.name;
+            // 清空食材
+            foodList.innerHTML = "";
+            dish.food.forEach(item => {
+                let li = document.createElement("li");
+                li.innerText = item;
+                foodList.appendChild(li);
+            })
+            // 清空步骤
+            stepList.innerHTML = "";
+            dish.step.forEach(item => {
+                let li = document.createElement("li");
+                li.innerText = item;
+                stepList.appendChild(li);
+            })
         }
-        // 切换显示步骤
-        function showStep() {
-            document.getElementById("foodBox").classList.add("hide");
-            document.getElementById("stepBox").classList.remove("hide");
-            document.getElementById("tipBox").classList.add("hide");
-        }
-        // 切换显示技巧
-        function showTip() {
-            document.getElementById("foodBox").classList.add("hide");
-            document.getElementById("stepBox").classList.add("hide");
-            document.getElementById("tipBox").classList.remove("hide");
+
+        // 初始化
+        render();
+
+        // 点击切换下一道
+        btn.onclick = function () {
+            index = (index + 1) % dishList.length;
+            render();
         }
     </script>
 </body>
