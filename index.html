@@ -2,14 +2,20 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>西红柿炒鸡蛋做法</title>
+    <title>西红柿炒鸡蛋交互式教程</title>
     <style>
         body {
             background: #fff8f0;
             font-family: "微软雅黑";
-            max-width: 600px;
+            max-width: 650px;
             margin: 40px auto;
             padding: 0 20px;
+        }
+        .box {
+            background: #fff;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 0 10px #ffd6c0;
         }
         h1 {
             color: #e63946;
@@ -17,43 +23,110 @@
         }
         h2 {
             color: #333;
-            font-size: 18px;
+            font-size: 19px;
             margin-top: 30px;
         }
-        ul, ol {
+        .step-item {
             line-height: 2;
             font-size: 16px;
-            color: #444;
+            margin: 8px 0;
         }
-        .box {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 8px #ffd6c0;
+        .btn-group {
+            margin: 20px 0;
+            text-align: center;
+        }
+        button {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            background: #e63946;
+            color: white;
+            font-size: 15px;
+            margin: 0 8px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #c82333;
+        }
+        .tip {
+            margin-top: 20px;
+            padding: 12px;
+            background: #fff0e8;
+            border-radius: 8px;
+            color: #662222;
+        }
+        .hide {
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="box">
-        <h1>西红柿炒鸡蛋家常做法</h1>
+        <h1>西红柿炒鸡蛋（交互式教程）</h1>
 
-        <h2>一、准备食材</h2>
-        <ul>
-            <li>西红柿 2个</li>
-            <li>鸡蛋 3个</li>
-            <li>小葱、盐、白糖、食用油少许</li>
-        </ul>
+        <div class="btn-group">
+            <button onclick="showFood()">查看食材</button>
+            <button onclick="showStep()">查看制作步骤</button>
+            <button onclick="showTip()">烹饪小技巧</button>
+        </div>
 
-        <h2>二、制作步骤</h2>
-        <ol>
-            <li>西红柿洗净切块，小葱切葱花；鸡蛋打入碗中加少许盐搅匀。</li>
-            <li>锅中倒油烧热，倒入蛋液，定型后炒散盛出备用。</li>
-            <li>同一口锅再加少量油，放入西红柿翻炒，按压出汤汁。</li>
-            <li>加一小勺白糖中和酸味，适量盐调味。</li>
-            <li>倒入炒好的鸡蛋，翻炒均匀，撒葱花即可出锅。</li>
-        </ol>
+        <!-- 食材区域 -->
+        <div id="foodBox" class="hide">
+            <h2>一、所需食材（勾选确认备齐）</h2>
+            <div class="step-item">
+                <input type="checkbox" id="f1">
+                <label for="f1">西红柿 2个</label>
+            </div>
+            <div class="step-item">
+                <input type="checkbox" id="f2">
+                <label for="f2">鸡蛋 3枚</label>
+            </div>
+            <div class="step-item">
+                <input type="checkbox" id="f3">
+                <label for="f3">小葱、食用盐、白糖、食用油</label>
+            </div>
+        </div>
+
+        <!-- 步骤区域 -->
+        <div id="stepBox" class="hide">
+            <h2>二、详细制作步骤</h2>
+            <ol>
+                <li class="step-item">西红柿切块，小葱切葱花，鸡蛋加盐打散。</li>
+                <li class="step-item">热油下锅炒散鸡蛋，定型后盛出备用。</li>
+                <li class="step-item">锅中少油，下西红柿按压翻炒出汤汁。</li>
+                <li class="step-item">加白糖、食盐调味中和酸味。</li>
+                <li class="step-item">倒回鸡蛋翻炒均匀，撒葱花出锅。</li>
+            </ol>
+        </div>
+
+        <!-- 技巧区域 -->
+        <div id="tipBox" class="hide tip">
+            <h2>三、烹饪小技巧</h2>
+            <p>1. 西红柿顶部划十字烫一下，去皮口感更细腻</p>
+            <p>2. 鸡蛋里加少许清水，炒出来更嫩滑</p>
+            <p>3. 白糖不要多放，只中和番茄酸味即可</p>
+        </div>
     </div>
-</body>
-</html>
+
+    <script>
+        // 切换显示食材
+        function showFood() {
+            document.getElementById("foodBox").classList.remove("hide");
+            document.getElementById("stepBox").classList.add("hide");
+            document.getElementById("tipBox").classList.add("hide");
+        }
+        // 切换显示步骤
+        function showStep() {
+            document.getElementById("foodBox").classList.add("hide");
+            document.getElementById("stepBox").classList.remove("hide");
+            document.getElementById("tipBox").classList.add("hide");
+        }
+        // 切换显示技巧
+        function showTip() {
+            document.getElementById("foodBox").classList.add("hide");
+            document.getElementById("stepBox").classList.add("hide");
+            document.getElementById("tipBox").classList.remove("hide");
+        }
+    </script>
 </body>
 </html>
