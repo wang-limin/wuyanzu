@@ -2,176 +2,147 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>家常菜谱切换</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 智能菜谱助手</title>
     <style>
-        * {
+        *{
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
         }
-        body {
-            background-color: #f8f8f8;
-            font-family: "微软雅黑";
-            padding: 40px 20px;
+        body{
+            background: linear-gradient(135deg,#fff5f8,#fef2f4);
+            padding: 30px 15px;
         }
-        .wrap {
-            max-width: 620px;
+        .wrap{
+            max-width: 600px;
             margin: 0 auto;
             background: #fff;
+            border-radius: 20px;
             padding: 35px;
+            box-shadow: 0 10px 30px rgba(220, 80, 100, 0.12);
+        }
+        h1{
+            text-align: center;
+            color: #e63950;
+            font-size: 26px;
+            margin-bottom: 30px;
+        }
+        .card{
+            background: #fef4f6;
             border-radius: 16px;
-            box-shadow: 0 4px 15px #ddd;
+            padding: 24px;
+            margin-bottom: 24px;
         }
-        h1 {
-            text-align: center;
-            color: #222;
-            margin-bottom: 30px;
-        }
-        #switchBtn {
-            display: block;
-            width: 100%;
-            padding: 14px;
+        h3{
+            color: #c92a40;
+            margin-bottom: 14px;
             font-size: 17px;
-            border: none;
+        }
+        textarea{
+            width: 100%;
+            border: 1px solid #f8c8d0;
             border-radius: 10px;
-            background: #ff4444;
-            color: white;
+            padding: 14px;
+            font-size: 15px;
+            min-height: 80px;
+            resize: none;
+            outline: none;
+            margin-bottom: 14px;
+        }
+        textarea:focus{
+            border-color: #e63950;
+        }
+        button{
+            width: 100%;
+            border: none;
+            padding: 13px;
+            border-radius: 10px;
+            background: linear-gradient(135deg,#e63950,#d6283e);
+            color: #fff;
+            font-size: 16px;
             cursor: pointer;
-            margin-bottom: 30px;
+            transition: 0.2s;
         }
-        #switchBtn:hover {
-            background: #dd2222;
+        button:disabled{
+            background: #ccc;
+            cursor: not-allowed;
         }
-        .title {
-            font-size: 22px;
-            color: #c82222;
-            margin-bottom: 18px;
+        .loading{
             text-align: center;
+            color: #999;
+            margin: 12px 0;
+            display: none;
         }
-        h3 {
-            margin: 20px 0 8px;
-            color: #333;
-        }
-        ul, ol {
+        .result{
+            background: #fff;
+            border-left: 4px solid #e63950;
+            padding: 18px;
+            border-radius: 10px;
             line-height: 1.9;
-            padding-left: 22px;
-            color: #444;
+            color: #333;
+            white-space: pre-line;
         }
     </style>
 </head>
 <body>
     <div class="wrap">
-        <h1>一键切换六道家常菜</h1>
-        <button id="switchBtn">点击切换下一道菜</button>
+        <h1>🍳 AI 智能菜谱助手</h1>
 
-        <div id="box">
-            <div class="title" id="dishName"></div>
-            <h3>所需食材</h3>
-            <ul id="foodList"></ul>
-            <h3>制作步骤</h3>
-            <ol id="stepList"></ol>
+        <!-- 1.输入菜名做菜 -->
+        <div class="card">
+            <h3>✨ 输入菜名，AI 教你做菜</h3>
+            <textarea id="nameInp" placeholder="输入菜名：如红烧肉、可乐鸡翅、番茄炒蛋"></textarea>
+            <button onclick="cookByName()">生成完整菜谱</button>
+            <div class="loading" id="load1">AI 正在生成菜谱...</div>
+            <div class="result" id="res1"></div>
         </div>
+
+        <!-- 2.输入剩菜搭配 -->
+        <div class="card">
+            <h3>✨ 输入剩食材，AI 帮你搭配</h3>
+            <textarea id="matInp" placeholder="输入家里现有食材：鸡蛋、西红柿、土豆、豆腐"></textarea>
+            <button onclick="cookByMat()">AI 智能搭配菜品</button>
+            <div class="loading" id="load2">AI 正在搭配菜谱...</div>
+            <div class="result" id="res2"></div>
+        </div>
+
     </div>
 
     <script>
-        // 6道菜数据
-        const dishList = [
-            {
-                name: "西红柿炒鸡蛋",
-                food: ["西红柿2个", "鸡蛋3枚", "小葱、盐、白糖、食用油"],
-                step: [
-                    "西红柿切块，小葱切葱花，鸡蛋加盐打散",
-                    "热油下入蛋液，定型炒散盛出备用",
-                    "锅中少油放入西红柿按压炒出汤汁",
-                    "加少许白糖、食盐调味",
-                    "倒回鸡蛋翻炒均匀，撒葱花出锅"
-                ]
-            },
-            {
-                name: "酸辣土豆丝",
-                food: ["土豆1个", "干辣椒、大蒜、香醋、食盐"],
-                step: [
-                    "土豆切成细丝，清水浸泡去除淀粉",
-                    "热油爆香蒜末与干辣椒",
-                    "大火快速翻炒土豆丝至断生",
-                    "出锅前淋香醋、加盐拌匀即可"
-                ]
-            },
-            {
-                name: "青椒肉丝",
-                food: ["瘦肉、青椒2个", "生抽、淀粉、大蒜、盐"],
-                step: [
-                    "肉丝加生抽、淀粉抓匀腌制10分钟",
-                    "滑炒肉丝变色后盛出",
-                    "下入青椒翻炒至半熟",
-                    "倒回肉丝调味翻炒均匀出锅"
-                ]
-            },
-            {
-                name: "凉拌黄瓜",
-                food: ["黄瓜1根", "蒜末、香醋、生抽、香油、盐"],
-                step: [
-                    "黄瓜拍碎切成小段",
-                    "加盐腌制5分钟，倒掉析出水分",
-                    "放入蒜末、所有调料拌匀",
-                    "冷藏五分钟口感更佳"
-                ]
-            },
-            {
-                name: "番茄牛腩",
-                food: ["牛腩500g、西红柿3个", "生姜、大葱、冰糖、盐"],
-                step: [
-                    "牛腩冷水下锅焯水，撇去血沫捞出",
-                    "西红柿下锅炒出浓稠汤汁",
-                    "放入牛腩、葱姜小火慢炖1小时",
-                    "加冰糖、食盐调味收汁完成"
-                ]
-            },
-            {
-                name: "清炒油麦菜",
-                food: ["油麦菜一把", "大蒜、食用盐"],
-                step: [
-                    "油麦菜洗净沥干水分",
-                    "热油爆香蒜末",
-                    "大火快速翻炒油麦菜",
-                    "少许盐调味，立刻出锅"
-                ]
-            }
-        ];
+        const api = "https://api.vvhan.com/api/ai/chat?msg=";
 
-        let index = 0;
-        const btn = document.getElementById("switchBtn");
-        const dishName = document.getElementById("dishName");
-        const foodList = document.getElementById("foodList");
-        const stepList = document.getElementById("stepList");
+        // 菜名生成菜谱
+        async function cookByName(){
+            let val = nameInp.value.trim();
+            if(!val) return alert("请输入菜名！");
+            load1.style.display = "block";
+            res1.innerText = "";
+            event.target.disabled = true;
 
-        // 渲染当前菜品
-        function render() {
-            const dish = dishList[index];
-            dishName.innerText = dish.name;
-            // 清空食材
-            foodList.innerHTML = "";
-            dish.food.forEach(item => {
-                let li = document.createElement("li");
-                li.innerText = item;
-                foodList.appendChild(li);
-            })
-            // 清空步骤
-            stepList.innerHTML = "";
-            dish.step.forEach(item => {
-                let li = document.createElement("li");
-                li.innerText = item;
-                stepList.appendChild(li);
-            })
+            let q = `你是专业厨师，教新手做【${val}】。输出格式：【菜品简介】【食材清单】【详细步骤】【烹饪小贴士】，步骤详细、简单易懂。`;
+            let d = await (await fetch(api + encodeURIComponent(q))).json();
+            res1.innerText = d.data || "生成失败，请重试";
+
+            load1.style.display = "none";
+            event.target.disabled = false;
         }
 
-        // 初始化
-        render();
+        // 食材搭配菜谱
+        async function cookByMat(){
+            let val = matInp.value.trim();
+            if(!val) return alert("请输入你有的食材！");
+            load2.style.display = "block";
+            res2.innerText = "";
+            event.target.disabled = true;
 
-        // 点击切换下一道
-        btn.onclick = function () {
-            index = (index + 1) % dishList.length;
-            render();
+            let q = `我家里只有这些食材：${val}。不用其他额外食材，帮我搭配2-3道简单家常菜，每道都写清楚食材用量和详细步骤，适合新手。`;
+            let d = await (await fetch(api + encodeURIComponent(q))).json();
+            res2.innerText = d.data || "生成失败，请重试";
+
+            load2.style.display = "none";
+            event.target.disabled = false;
         }
     </script>
 </body>
