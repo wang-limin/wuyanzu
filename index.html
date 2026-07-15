@@ -110,16 +110,13 @@
 <body>
 <div class="wrap">
     <h1>🔍 AI 智能菜谱助手</h1>
-
     <div class="box">
         <span class="label">✨输入菜名，AI生成菜谱+菜品实拍图</span>
         <textarea id="dishInput" placeholder="输入菜名，例如：红烧肉、辣椒炒肉"></textarea>
         <button id="btn1" onclick="getDish()">生成完整菜谱+菜品图片</button>
-        <!-- 菜品图片展示区域 -->
         <div class="img-box" id="imgBox1">暂无菜品图片</div>
         <textarea id="res1" readonly></textarea>
     </div>
-
     <div class="box">
         <span class="label">✨输入食材，AI自动搭配家常菜</span>
         <textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、五花肉、土豆"></textarea>
@@ -127,11 +124,8 @@
         <textarea id="res2" readonly></textarea>
     </div>
 </div>
-
 <script>
 const BASE_API = "https://wuyanzu-production-84fa.up.railway.app/api";
-
-// 生成菜谱+菜品图片
 async function getDish() {
     const dishName = document.getElementById("dishInput").value.trim();
     if (!dishName) {
@@ -141,13 +135,10 @@ async function getDish() {
     const btn = document.getElementById("btn1");
     const resText = document.getElementById("res1");
     const imgWrap = document.getElementById("imgBox1");
-
     btn.disabled = true;
     resText.value = "AI正在撰写菜谱，请稍候...";
     imgWrap.innerHTML = "正在生成菜品图片...";
-
     try {
-        // 第一步：获取菜谱文字
         const recipeResp = await fetch(`${BASE_API}/getRecipe`, {
             method: "POST",
             headers: {"Content-Type":"application/json"},
@@ -161,8 +152,6 @@ async function getDish() {
             return;
         }
         resText.value = recipeData.data;
-
-        // 第二步：请求后端生成菜品图片
         const imgResp = await fetch(`${BASE_API}/getImage`, {
             method: "POST",
             headers: {"Content-Type":"application/json"},
@@ -180,8 +169,6 @@ async function getDish() {
     }
     btn.disabled = false;
 }
-
-// 食材搭配功能（无图片）
 async function getMatch() {
     const foodList = document.getElementById("matInput").value.trim();
     if (!foodList) {
