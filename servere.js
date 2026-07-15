@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 app.use(express.static(__dirname));
 
 // 这里替换你自己的智谱API密钥
-const ZHIPU_API_KEY = "sk-粘贴你的完整密钥";
+const ZHIPU_API_KEY = "sk-5c107e2bbf3b4a70a9bbaf1db9c0aa37.IU6v0vwsKpFi8xyk";
 
 // AI生成菜谱接口
 app.post("/api/getRecipe", async (req, res) => {
