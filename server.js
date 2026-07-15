@@ -9,6 +9,7 @@ app.use(express.json());
 const port = process.env.PORT || 3000;
 
 app.use(express.static(__dirname));
+
 // 填入你的智谱完整sk密钥
 const ZHIPU_API_KEY = "sk-5c107e2bbf3b4a70a9bbaf1db9c0aa37.IU6v0vwsKpFi8xyk";
 
@@ -27,9 +28,13 @@ app.post("/api/getRecipe", async (req, res) => {
             success: true,
             data: result.data.choices[0].message.content
         });
-    } catch (err)
-        const msg = err?.message || "接口异常";
-        res.json({ success: false, msg: "AI生成失败：" + msg });
+    } catch (err) {
+        // 全部代码放进{}内部，修复语法报错
+        const msg = err?.message || "接口请求异常，请检查API密钥";
+        res.json({
+            success: false,
+            msg: "AI生成失败：" + msg
+        });
     }
 });
 
