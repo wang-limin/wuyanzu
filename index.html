@@ -2,66 +2,88 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI智能菜谱助手</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui;
+            font-family: "Microsoft YaHei", system-ui, sans-serif;
         }
         body {
-            background-color: #ffeef0;
-            padding: 40px 20px;
+            background: linear-gradient(135deg, #fff0f2, #ffe4e8);
+            padding: 50px 16px;
+            min-height: 100vh;
         }
         .container {
-            max-width: 480px;
+            max-width: 520px;
             margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 16px;
+            background: #ffffff;
+            padding: 36px;
+            border-radius: 22px;
+            box-shadow: 0 8px 30px rgba(214, 40, 64, 0.12);
         }
         h1 {
             text-align: center;
             color: #d62840;
-            margin-bottom: 30px;
-            font-size: 24px;
+            margin-bottom: 36px;
+            font-size: 26px;
+            letter-spacing: 1px;
         }
         .card {
             background: #fef2f4;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 28px;
         }
         .title-tip {
             color: #d62840;
-            font-size: 16px;
-            margin-bottom: 12px;
+            font-size: 17px;
+            margin-bottom: 14px;
+            font-weight: 500;
         }
         textarea {
             width: 100%;
-            padding: 14px;
-            border: 1px solid #f8c8d0;
-            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #f4c2ca;
+            border-radius: 12px;
             font-size: 15px;
-            min-height: 80px;
-            margin-bottom: 14px;
+            min-height: 88px;
+            margin-bottom: 16px;
             background: #fff;
             resize: none;
+            transition: border 0.25s ease;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #d62840;
         }
         button {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             background-color: #d62840;
             color: white;
             font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        button:hover:not(:disabled) {
+            background-color: #b81f33;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(214, 40, 64, 0.25);
+        }
+        button:active:not(:disabled) {
+            transform: translateY(0);
         }
         button:disabled {
-            background: #bbb;
+            background: #d4a0a8;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
     </style>
 </head>
@@ -71,14 +93,13 @@
 
     <div class="card">
         <div class="title-tip">✨输入菜名，AI教你做菜</div>
-        <!-- 修复textarea清空写法，中间无任何文字 -->
-        <textarea id="dishInput" placeholder="输入菜名，例如：辣椒炒肉"></textarea>
+        <textarea id="dishInput" placeholder="输入菜名，例如：辣椒炒肉、红烧肉"></textarea>
         <button id="btn1" onclick="getDish()">生成完整菜谱</button>
         <textarea id="res1" readonly></textarea>
     </div>
 
     <div class="card">
-        <div class="title-tip">✨输入剩食材，AI帮你搭配</div>
+        <div class="title-tip">✨输入家中食材，AI智能搭配菜品</div>
         <textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、西红柿、土豆、豆腐"></textarea>
         <button id="btn2" onclick="getMatch()">AI 智能搭配菜品</button>
         <textarea id="res2" readonly></textarea>
@@ -91,18 +112,18 @@ const BACKEND_URL = "https://wuyanzu-production-84fa.up.railway.app/api/getRecip
 async function getDish() {
     const name = document.getElementById("dishInput").value.trim();
     if (!name) {
-        alert("请输入菜名");
+        alert("请输入需要查询的菜名");
         return;
     }
     const btn = document.getElementById("btn1");
     const out = document.getElementById("res1");
     btn.disabled = true;
-    out.value = "AI 正在生成菜谱...";
+    out.value = "AI 正在生成详细菜谱，请稍候...";
     try {
         const res = await fetch(BACKEND_URL, {
             method: "POST",
             headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({prompt:`你是资深家常菜厨师，给我详细讲解【${name}】完整做法，严格分4块：1菜品简介 2精准食材用量 3分步操作 4烹饪小贴士，语言简单易懂。`})
+            body: JSON.stringify({prompt:`你是资深家常菜厨师，详细讲解【${name}】完整做法，分四块清晰输出：1菜品简介 2精准食材用量 3分步操作步骤 4烹饪实用小贴士，语言通俗易懂。`})
         });
         const data = await res.json();
         if(data.success){
@@ -111,7 +132,7 @@ async function getDish() {
             out.value = "生成失败：" + (data.msg || "未知错误");
         }
     }catch(e){
-        out.value = "无法连接后端，请检查Railway服务是否启动";
+        out.value = "无法连接后端，请稍后重试";
     }
     btn.disabled = false;
 }
@@ -119,18 +140,18 @@ async function getDish() {
 async function getMatch() {
     const mat = document.getElementById("matInput").value.trim();
     if (!mat) {
-        alert("请输入食材");
+        alert("请输入你现有的食材");
         return;
     }
     const btn = document.getElementById("btn2");
     const out = document.getElementById("res2");
     btn.disabled = true;
-    out.value = "AI 正在搭配菜品...";
+    out.value = "AI 正在搭配家常菜，请稍候...";
     try {
         const res = await fetch(BACKEND_URL, {
             method: "POST",
             headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({prompt:`现有食材：${mat}，根据这些食材推荐3道家常菜，包含详细做法。`})
+            body: JSON.stringify({prompt:`现有食材：${mat}，推荐3道简单家常菜品，附带完整详细做法。`})
         });
         const data = await res.json();
         if(data.success){
@@ -139,7 +160,7 @@ async function getMatch() {
             out.value = "生成失败：" + (data.msg || "未知错误");
         }
     }catch(e){
-        out.value = "无法连接后端，请检查Railway服务是否启动";
+        out.value = "无法连接后端，请稍后重试";
     }
     btn.disabled = false;
 }
