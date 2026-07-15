@@ -9,78 +9,80 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: "Microsoft YaHei", system-ui, sans-serif;
+            font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #fff0f2, #ffe4e8);
-            padding: 50px 16px;
+            background: linear-gradient(145deg, #fff5f7, #ffe1e6);
+            padding: 60px 16px;
             min-height: 100vh;
         }
-        .container {
-            max-width: 520px;
+        .wrap {
+            max-width: 540px;
             margin: 0 auto;
             background: #ffffff;
-            padding: 36px;
-            border-radius: 22px;
-            box-shadow: 0 8px 30px rgba(214, 40, 64, 0.12);
+            padding: 40px;
+            border-radius: 26px;
+            box-shadow: 0 10px 35px rgba(212, 38, 62, 0.14);
         }
         h1 {
             text-align: center;
-            color: #d62840;
-            margin-bottom: 36px;
-            font-size: 26px;
+            color: #d4263e;
+            font-size: 28px;
+            margin-bottom: 40px;
             letter-spacing: 1px;
         }
-        .card {
-            background: #fef2f4;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 28px;
+        .box {
+            background: #fef1f3;
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 32px;
         }
-        .title-tip {
-            color: #d62840;
-            font-size: 17px;
-            margin-bottom: 14px;
+        .label {
+            color: #d4263e;
+            font-size: 18px;
             font-weight: 500;
+            margin-bottom: 16px;
+            display: block;
         }
         textarea {
             width: 100%;
-            padding: 16px;
-            border: 1px solid #f4c2ca;
-            border-radius: 12px;
-            font-size: 15px;
-            min-height: 88px;
-            margin-bottom: 16px;
+            border: 1px solid #f2bdc4;
+            border-radius: 14px;
+            padding: 18px;
+            font-size: 16px;
+            min-height: 95px;
             background: #fff;
             resize: none;
-            transition: border 0.25s ease;
+            margin-bottom: 18px;
+            transition: all 0.24s ease;
         }
         textarea:focus {
             outline: none;
-            border-color: #d62840;
+            border-color: #d4263e;
+            box-shadow: 0 0 0 3px rgba(212, 38, 62, 0.1);
         }
         button {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             border: none;
-            border-radius: 12px;
-            background-color: #d62840;
-            color: white;
-            font-size: 16px;
+            border-radius: 14px;
+            background: #d4263e;
+            color: #fff;
+            font-size: 17px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.25s ease;
+            transition: all 0.24s ease;
         }
         button:hover:not(:disabled) {
-            background-color: #b81f33;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(214, 40, 64, 0.25);
+            background: #b61f33;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(212, 38, 62, 0.28);
         }
         button:active:not(:disabled) {
             transform: translateY(0);
         }
         button:disabled {
-            background: #d4a0a8;
+            background: #d6a3ab;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
@@ -88,19 +90,19 @@
     </style>
 </head>
 <body>
-<div class="container">
+<div class="wrap">
     <h1>🔍 AI 智能菜谱助手</h1>
 
-    <div class="card">
-        <div class="title-tip">✨输入菜名，AI教你做菜</div>
-        <textarea id="dishInput" placeholder="输入菜名，例如：辣椒炒肉、红烧肉"></textarea>
+    <div class="box">
+        <span class="label">✨输入菜名，AI教你做菜</span>
+        <textarea id="dishInput" placeholder="输入菜名，例如：红烧肉、辣椒炒肉"></textarea>
         <button id="btn1" onclick="getDish()">生成完整菜谱</button>
         <textarea id="res1" readonly></textarea>
     </div>
 
-    <div class="card">
-        <div class="title-tip">✨输入家中食材，AI智能搭配菜品</div>
-        <textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、西红柿、土豆、豆腐"></textarea>
+    <div class="box">
+        <span class="label">✨输入食材，AI自动搭配菜品</span>
+        <textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、五花肉、土豆"></textarea>
         <button id="btn2" onclick="getMatch()">AI 智能搭配菜品</button>
         <textarea id="res2" readonly></textarea>
     </div>
@@ -112,7 +114,7 @@ const BACKEND_URL = "https://wuyanzu-production-84fa.up.railway.app/api/getRecip
 async function getDish() {
     const name = document.getElementById("dishInput").value.trim();
     if (!name) {
-        alert("请输入需要查询的菜名");
+        alert("请输入菜名");
         return;
     }
     const btn = document.getElementById("btn1");
@@ -123,7 +125,7 @@ async function getDish() {
         const res = await fetch(BACKEND_URL, {
             method: "POST",
             headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({prompt:`你是资深家常菜厨师，详细讲解【${name}】完整做法，分四块清晰输出：1菜品简介 2精准食材用量 3分步操作步骤 4烹饪实用小贴士，语言通俗易懂。`})
+            body: JSON.stringify({prompt:`你是专业家常菜厨师，详细讲解【${name}】完整做法，分四点清晰输出：1菜品简介 2食材分量 3详细步骤 4烹饪小贴士，文字简洁易懂。`})
         });
         const data = await res.json();
         if(data.success){
@@ -140,7 +142,7 @@ async function getDish() {
 async function getMatch() {
     const mat = document.getElementById("matInput").value.trim();
     if (!mat) {
-        alert("请输入你现有的食材");
+        alert("请输入现有的食材");
         return;
     }
     const btn = document.getElementById("btn2");
@@ -151,7 +153,7 @@ async function getMatch() {
         const res = await fetch(BACKEND_URL, {
             method: "POST",
             headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({prompt:`现有食材：${mat}，推荐3道简单家常菜品，附带完整详细做法。`})
+            body: JSON.stringify({prompt:`现有食材：${mat}，推荐3道简单家常菜，附带完整详细做法。`})
         });
         const data = await res.json();
         if(data.success){
