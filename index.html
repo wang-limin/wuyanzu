@@ -1,87 +1,168 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI智能菜谱助手</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:"Microsoft YaHei",system-ui}
-body{background:linear-gradient(145deg,#fff5f7,#ffe1e6);padding:60px 16px;min-height:100vh}
-.wrap{max-width:540px;margin:0 auto;background:#fff;padding:40px;border-radius:26px;box-shadow:0 10px 35px rgba(212,38,62,0.14)}
-h1{text-align:center;color:#d4263e;font-size:28px;margin-bottom:40px;letter-spacing:1px}
-.box{background:#fef1f3;border-radius:20px;padding:28px;margin-bottom:32px}
-.label{color:#d4263e;font-size:18px;font-weight:500;margin-bottom:16px;display:block}
-textarea{width:100%;border:1px solid #f2bdc4;border-radius:14px;padding:18px;font-size:16px;min-height:95px;background:#fff;resize:none;margin-bottom:18px;transition:0.24s}
-textarea:focus{outline:none;border-color:#d4263e;box-shadow:0 0 0 3px rgba(212,38,62,0.1)}
-button{width:100%;padding:18px;border:none;border-radius:14px;background:#d4263e;color:#fff;font-size:17px;font-weight:500;cursor:pointer;transition:0.24s;margin-bottom:16px}
-button:hover:not(:disabled){background:#b61f33;transform:translateY(-3px);box-shadow:0 6px 16px rgba(212,38,62,0.28)}
-button:active:not(:disabled){transform:translateY(0)}
-button:disabled{background:#d6a3ab;cursor:not-allowed;transform:none;box-shadow:none}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI智能菜谱助手</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #fff5f7, #ffe1e6);
+            padding: 60px 16px;
+            min-height: 100vh;
+        }
+        .wrap {
+            max-width: 540px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 26px;
+            box-shadow: 0 10px 35px rgba(212, 38, 62, 0.14);
+        }
+        h1 {
+            text-align: center;
+            color: #d4263e;
+            font-size: 28px;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+        .box {
+            background: #fef1f3;
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 32px;
+        }
+        .label {
+            color: #d4263e;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            display: block;
+        }
+        textarea {
+            width: 100%;
+            border: 1px solid #f2bdc4;
+            border-radius: 14px;
+            padding: 18px;
+            font-size: 16px;
+            min-height: 95px;
+            background: #fff;
+            resize: none;
+            margin-bottom: 18px;
+            transition: all 0.24s ease;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #d4263e;
+            box-shadow: 0 0 0 3px rgba(212, 38, 62, 0.1);
+        }
+        button {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 14px;
+            background: #d4263e;
+            color: #fff;
+            font-size: 17px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.24s ease;
+        }
+        button:hover:not(:disabled) {
+            background: #b61f33;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(212, 38, 62, 0.28);
+        }
+        button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        button:disabled {
+            background: #d6a3ab;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+    </style>
 </head>
 <body>
 <div class="wrap">
-<h1>🔍 AI 智能菜谱助手</h1>
-<div class="box">
-<span class="label">✨输入菜名，AI生成完整菜谱</span>
-<textarea id="dishInput" placeholder="输入菜名，例如：红烧肉、辣椒炒肉"></textarea>
-<button id="btn1" onclick="getDish()">生成菜谱</button>
-<textarea id="res1" readonly></textarea>
+    <h1>🔍 AI 智能菜谱助手</h1>
+
+    <div class="box">
+        <span class="label">✨输入菜名，AI教你做菜</span>
+        <textarea id="dishInput" placeholder="输入菜名，例如：红烧肉、辣椒炒肉"></textarea>
+        <button id="btn1" onclick="getDish()">生成完整菜谱</button>
+        <textarea id="res1" readonly></textarea>
+    </div>
+
+    <div class="box">
+        <span class="label">✨输入食材，AI自动搭配菜品</span>
+        <textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、五花肉、土豆"></textarea>
+        <button id="btn2" onclick="getMatch()">AI 智能搭配菜品</button>
+        <textarea id="res2" readonly></textarea>
+    </div>
 </div>
-<div class="box">
-<span class="label">✨输入食材，AI自动搭配家常菜</span>
-<textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、五花肉、土豆"></textarea>
-<button id="btn2" onclick="getMatch()">智能搭配菜品</button>
-<textarea id="res2" readonly></textarea>
-</div>
-</div>
+
 <script>
-const BASE_API = "https://wuyanzu-production-84fa.up.railway.app/api";
-async function getDish(){
-    const dishName = document.getElementById("dishInput").value.trim();
-    if(!dishName){alert("请输入菜名");return;}
+const BACKEND_URL = "https://wuyanzu-production-84fa.up.railway.app/api/getRecipe";
+
+async function getDish() {
+    const name = document.getElementById("dishInput").value.trim();
+    if (!name) {
+        alert("请输入菜名");
+        return;
+    }
     const btn = document.getElementById("btn1");
-    const resText = document.getElementById("res1");
+    const out = document.getElementById("res1");
     btn.disabled = true;
-    resText.value = "AI正在撰写菜谱，请稍候...";
-    try{
-        const resp = await fetch(`${BASE_API}/getRecipe`,{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({prompt:`你是专业家常菜厨师，详细讲解【${dishName}】完整做法，分四点输出：1菜品简介 2食材分量 3分步操作 4烹饪小贴士，语言简洁易懂。`})
+    out.value = "AI 正在生成详细菜谱，请稍候...";
+    try {
+        const res = await fetch(BACKEND_URL, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({prompt:`你是专业家常菜厨师，详细讲解【${name}】完整做法，分四点清晰输出：1菜品简介 2食材分量 3详细步骤 4烹饪小贴士，文字简洁易懂。`})
         });
-        const data = await resp.json();
+        const data = await res.json();
         if(data.success){
-            resText.value = data.data;
+            out.value = data.data;
         }else{
-            resText.value = data.msg;
+            out.value = "生成失败：" + (data.msg || "未知错误");
         }
-    }catch(err){
-        resText.value = "网络请求失败，请稍后重试";
+    }catch(e){
+        out.value = "无法连接后端，请稍后重试";
     }
     btn.disabled = false;
 }
-async function getMatch(){
-    const foodList = document.getElementById("matInput").value.trim();
-    if(!foodList){alert("请输入你现有的食材");return;}
+
+async function getMatch() {
+    const mat = document.getElementById("matInput").value.trim();
+    if (!mat) {
+        alert("请输入现有的食材");
+        return;
+    }
     const btn = document.getElementById("btn2");
-    const resText = document.getElementById("res2");
+    const out = document.getElementById("res2");
     btn.disabled = true;
-    resText.value = "AI正在搭配家常菜，请稍候...";
-    try{
-        const resp = await fetch(`${BASE_API}/getRecipe`,{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({prompt:`现有食材：${foodList}，推荐3道简单家常菜，附带完整详细做法。`})
+    out.value = "AI 正在搭配家常菜，请稍候...";
+    try {
+        const res = await fetch(BACKEND_URL, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({prompt:`现有食材：${mat}，推荐3道简单家常菜，附带完整详细做法。`})
         });
-        const data = await resp.json();
+        const data = await res.json();
         if(data.success){
-            resText.value = data.data;
+            out.value = data.data;
         }else{
-            resText.value = data.msg;
+            out.value = "生成失败：" + (data.msg || "未知错误");
         }
-    }catch(err){
-        resText.value = "网络请求失败，请稍后重试";
+    }catch(e){
+        out.value = "无法连接后端，请稍后重试";
     }
     btn.disabled = false;
 }
