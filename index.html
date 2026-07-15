@@ -71,16 +71,18 @@
 
     <div class="card">
         <div class="title-tip">✨输入菜名，AI教你做菜</div>
-        <textarea id="dishInput" placeholder="输入菜名，例如：辣椒炒肉"></textarea>
+        <!-- value="" 彻底清空默认文字，仅保留占位提示 -->
+        <textarea id="dishInput" value="" placeholder="输入菜名，例如：辣椒炒肉"></textarea>
         <button id="btn1" onclick="getDish()">生成完整菜谱</button>
-        <textarea id="res1" readonly></textarea>
+        <textarea id="res1" readonly value=""></textarea>
     </div>
 
     <div class="card">
         <div class="title-tip">✨输入剩食材，AI帮你搭配</div>
-        <textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、西红柿、土豆、豆腐"></textarea>
+        <!-- value="" 无默认文字 -->
+        <textarea id="matInput" value="" placeholder="输入家里现有食材：鸡蛋、西红柿、土豆、豆腐"></textarea>
         <button id="btn2" onclick="getMatch()">AI 智能搭配菜品</button>
-        <textarea id="res2" readonly></textarea>
+        <textarea id="res2" readonly value=""></textarea>
     </div>
 </div>
 
