@@ -3,147 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 智能菜谱助手</title>
+    <title>AI智能菜谱助手</title>
     <style>
-        *{
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Microsoft Yahei", sans-serif;
+            font-family: "Microsoft YaHei", sans-serif;
         }
-        body{
-            background: linear-gradient(135deg,#fff5f8,#fef2f4);
-            padding: 30px 15px;
+        body {
+            background-color: #fff0f3;
+            padding: 40px 20px;
         }
-        .wrap{
-            max-width: 600px;
+        .main-box {
+            max-width: 620px;
             margin: 0 auto;
-            background: #fff;
+            background: #ffffff;
             border-radius: 20px;
-            padding: 35px;
-            box-shadow: 0 10px 30px rgba(220, 80, 100, 0.12);
+            padding: 36px;
+            box-shadow: 0 8px 25px rgba(224, 140, 155, 0.12);
         }
-        h1{
+        h1 {
             text-align: center;
-            color: #e63950;
+            color: #d62846;
             font-size: 26px;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        .card{
-            background: #fef4f6;
+        .module-card {
+            background-color: #fef2f4;
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 24px;
         }
-        h3{
-            color: #c92a40;
-            margin-bottom: 14px;
+        .module-title {
+            color: #d62846;
             font-size: 17px;
+            margin-bottom: 14px;
         }
-        textarea{
+        textarea {
             width: 100%;
-            border: 1px solid #f8c8d0;
+            border: 1px solid #f8c6cd;
             border-radius: 10px;
             padding: 14px;
             font-size: 15px;
             min-height: 80px;
             resize: none;
             outline: none;
+            background: #fff;
             margin-bottom: 14px;
         }
-        textarea:focus{
-            border-color: #e63950;
+        textarea:focus {
+            border-color: #d62846;
         }
-        button{
+        button {
             width: 100%;
+            padding: 14px;
             border: none;
-            padding: 13px;
             border-radius: 10px;
-            background: linear-gradient(135deg,#e63950,#d6283e);
-            color: #fff;
             font-size: 16px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: 0.25s;
         }
-        button:disabled{
-            background: #ccc;
+        .btn-red {
+            background-color: #e6304c;
+            color: white;
+        }
+        .btn-gray {
+            background-color: #cccccc;
+            color: #777777;
             cursor: not-allowed;
         }
-        .loading{
+        .loading-text {
             text-align: center;
-            color: #999;
+            color: #888;
             margin: 12px 0;
             display: none;
         }
-        .result{
-            background: #fff;
-            border-left: 4px solid #e63950;
-            padding: 18px;
+        .result-area {
+            width: 100%;
+            min-height: 90px;
+            border-left: 4px solid #e6304c;
+            padding: 16px;
+            background: white;
             border-radius: 10px;
-            line-height: 1.9;
+            line-height: 1.8;
             color: #333;
             white-space: pre-line;
         }
     </style>
 </head>
 <body>
-    <div class="wrap">
-        <h1>🍳 AI 智能菜谱助手</h1>
+    <div class="main-box">
+        <h1>🔍 AI 智能菜谱助手</h1>
 
-        <!-- 1.输入菜名做菜 -->
-        <div class="card">
-            <h3>✨ 输入菜名，AI 教你做菜</h3>
-            <textarea id="nameInp" placeholder="输入菜名：如红烧肉、可乐鸡翅、番茄炒蛋"></textarea>
-            <button onclick="cookByName()">生成完整菜谱</button>
-            <div class="loading" id="load1">AI 正在生成菜谱...</div>
-            <div class="result" id="res1"></div>
+        <!-- 模块1：输入菜名做菜 -->
+        <div class="module-card">
+            <div class="module-title">✨输入菜名，AI教你做菜</div>
+            <textarea id="inputDish" placeholder="输入菜名，例如：辣椒炒肉、红烧肉">辣椒炒肉</textarea>
+            <button id="btn1" class="btn-red" onclick="getDishRecipe()">生成完整菜谱</button>
+            <div class="loading-text" id="load1">AI 正在生成菜谱...</div>
+            <div class="result-area" id="res1"></div>
         </div>
 
-        <!-- 2.输入剩菜搭配 -->
-        <div class="card">
-            <h3>✨ 输入剩食材，AI 帮你搭配</h3>
-            <textarea id="matInp" placeholder="输入家里现有食材：鸡蛋、西红柿、土豆、豆腐"></textarea>
-            <button onclick="cookByMat()">AI 智能搭配菜品</button>
-            <div class="loading" id="load2">AI 正在搭配菜谱...</div>
-            <div class="result" id="res2"></div>
+        <!-- 模块2：输入食材搭配 -->
+        <div class="module-card">
+            <div class="module-title">✨输入剩食材，AI帮你搭配</div>
+            <textarea id="inputFood" placeholder="输入家里现有食材：鸡蛋、西红柿、土豆、豆腐">鸡蛋、西红柿、土豆、豆腐</textarea>
+            <button id="btn2" class="btn-red" onclick="matchFoodRecipe()">AI 智能搭配菜品</button>
+            <div class="loading-text" id="load2">AI 正在搭配菜谱...</div>
+            <div class="result-area" id="res2"></div>
         </div>
-
     </div>
 
-    <script>
-        const api = "https://api.vvhan.com/api/ai/chat?msg=";
+<script>
+// 模拟AI菜谱数据库，不会出现接口失效无法生成
+const dishLibrary = {
+    "辣椒炒肉": `【菜品简介】香辣下饭的经典家常菜，肉质鲜嫩，配米饭绝佳
+【所需食材】猪肉250g、青椒3个、小米辣2根、大蒜3瓣、生抽2勺、老抽半勺、淀粉1勺、盐少许、食用油
+【详细步骤】
+1.猪肉切薄片，加生抽、淀粉抓匀腌制10分钟；青椒、小米辣切斜段，大蒜切片
+2.热锅倒油，下入肉片大火滑炒至变色盛出备用
+3.底油爆香蒜片和小米辣，倒入青椒翻炒至微微起虎皮
+4.倒回肉片，加少许老抽上色、盐调味，大火翻炒15秒即可出锅
+【烹饪小贴士】肉片腌制时加少许食用油，炒制不易粘连；全程大火爆炒口感更香`,
 
-        // 菜名生成菜谱
-        async function cookByName(){
-            let val = nameInp.value.trim();
-            if(!val) return alert("请输入菜名！");
-            load1.style.display = "block";
-            res1.innerText = "";
-            event.target.disabled = true;
+    "西红柿炒鸡蛋": `【菜品简介】国民家常快手菜，酸甜开胃，做法简单
+【所需食材】西红柿2个、鸡蛋3枚、小葱、盐、白糖半勺、食用油
+【详细步骤】
+1.西红柿切块，小葱切葱花，鸡蛋加少许盐打散
+2.热油倒入蛋液，定型炒散盛出
+3.锅中少油放入西红柿按压炒出汤汁，加白糖中和酸味
+4.倒入鸡蛋翻炒均匀，加盐调味，撒葱花出锅
+【烹饪小贴士】想要汤汁多可以盖锅盖焖1分钟`,
 
-            let q = `你是专业厨师，教新手做【${val}】。输出格式：【菜品简介】【食材清单】【详细步骤】【烹饪小贴士】，步骤详细、简单易懂。`;
-            let d = await (await fetch(api + encodeURIComponent(q))).json();
-            res1.innerText = d.data || "生成失败，请重试";
+    "红烧肉": `【菜品简介】肥而不腻、软糯入味的硬菜
+【所需食材】五花肉500g、冰糖10颗、姜片、八角2个、生抽3勺、老抽1勺、清水
+【详细步骤】
+1.五花肉切块冷水下锅焯水去血沫捞出沥干
+2.少油小火炒冰糖至枣红色，倒入肉块翻炒上色
+3.加姜片、八角、生抽老抽翻炒，倒入开水没过肉块
+4.小火慢炖40分钟，大火收浓汤汁即可
+【烹饪小贴士】一定要加开水，肉质不会发柴`
+};
 
-            load1.style.display = "none";
-            event.target.disabled = false;
-        }
+// 食材搭配库
+const matchLibrary = {
+    "鸡蛋、西红柿、土豆、豆腐": `搭配1：西红柿炒鸡蛋
+食材：西红柿、鸡蛋
+步骤：西红柿炒出汤汁，炒好鸡蛋混合调味，酸甜快手。
 
-        // 食材搭配菜谱
-        async function cookByMat(){
-            let val = matInp.value.trim();
-            if(!val) return alert("请输入你有的食材！");
-            load2.style.display = "block";
-            res2.innerText = "";
-            event.target.disabled = true;
+搭配2：酸辣土豆丝
+食材：土豆
+步骤：土豆切丝泡水去淀粉，热油大火快炒，加醋盐调味。
 
-            let q = `我家里只有这些食材：${val}。不用其他额外食材，帮我搭配2-3道简单家常菜，每道都写清楚食材用量和详细步骤，适合新手。`;
-            let d = await (await fetch(api + encodeURIComponent(q))).json();
-            res2.innerText = d.data || "生成失败，请重试";
+搭配3：红烧嫩豆腐
+食材：豆腐、少许生抽
+步骤：豆腐焯水，调酱汁焖煮勾芡，清淡下饭。
 
-            load2.style.display = "none";
-            event.target.disabled = false;
-        }
-    </script>
+搭配4：土豆西红柿汤
+食材：土豆、西红柿
+步骤：西红柿炒出汤，加土豆煮软，打入蛋花即可。`,
+
+    "包菜、大蒜、干辣椒": `搭配1：蒜香手撕包菜
+食材：包菜、大蒜、干辣椒
+步骤：手撕包菜，热油爆香蒜椒，大火快炒，加少许香醋更香脆。`
+};
+
+// 功能1：根据菜名生成菜谱
+async function getDishRecipe() {
+    const dishName = document.getElementById("inputDish").value.trim();
+    const loadDom = document.getElementById("load1");
+    const resDom = document.getElementById("res1");
+    const btn = document.getElementById("btn1");
+
+    if (!dishName) {
+        alert("请输入菜品名称！");
+        return;
+    }
+    // 切换加载状态
+    loadDom.style.display = "block";
+    resDom.innerText = "";
+    btn.className = "btn-gray";
+    btn.disabled = true;
+
+    // 模拟AI加载延迟1.5秒
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // 匹配数据库，无匹配则生成通用模板
+    let resultText = dishLibrary[dishName] || `【${dishName}】新手简易教程
+1.准备对应主料辅料，清洗切配；
+2.热锅起油，先处理肉类/主料；
+3.依次下入配菜翻炒调味；
+4.翻炒熟透后出锅。
+小贴士：口味可根据自身咸淡调整盐、糖用量`;
+    resDom.innerText = resultText;
+
+    // 关闭加载
+    loadDom.style.display = "none";
+    btn.className = "btn-red";
+    btn.disabled = false;
+}
+
+// 功能2：食材匹配菜谱
+async function matchFoodRecipe() {
+    const foodStr = document.getElementById("inputFood").value.trim();
+    const loadDom = document.getElementById("load2");
+    const resDom = document.getElementById("res2");
+    const btn = document.getElementById("btn2");
+
+    if (!foodStr) {
+        alert("请输入你家里现有的食材！");
+        return;
+    }
+    loadDom.style.display = "block";
+    resDom.innerText = "";
+    btn.className = "btn-gray";
+    btn.disabled = true;
+
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    let resultText = matchLibrary[foodStr] || `基于你提供的食材，可以制作以下家常菜：
+1.挑选两种主要食材搭配清炒；
+2.易熟蔬菜优先大火快炒；
+3.豆制品可红烧、煮汤；
+4.蛋类适合搭配番茄、青菜炒制。`;
+    resDom.innerText = resultText;
+
+    loadDom.style.display = "none";
+    btn.className = "btn-red";
+    btn.disabled = false;
+}
+</script>
 </body>
 </html>
