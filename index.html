@@ -1,166 +1,146 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI智能菜谱助手</title>
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:"Microsoft YaHei",sans-serif;
-}
-body{
-background:#fff0f3;
-padding:40px 15px;
-}
-.box{
-max-width:620px;
-margin:0 auto;
-background:#fff;
-border-radius:20px;
-padding:36px;
-box-shadow:0 8px 25px rgba(224,140,155,0.12);
-}
-h1{
-text-align:center;
-color:#d62846;
-font-size:26px;
-margin-bottom:32px;
-}
-.card{
-background:#fef2f4;
-border-radius:16px;
-padding:24px;
-margin-bottom:24px;
-}
-.tit{
-color:#d62846;
-font-size:17px;
-margin-bottom:14px;
-}
-textarea{
-width:100%;
-border:1px solid #f8c6cd;
-border-radius:10px;
-padding:14px;
-font-size:15px;
-min-height:80px;
-resize:none;
-outline:none;
-margin-bottom:14px;
-}
-textarea:focus{
-border-color:#d62846;
-}
-button{
-width:100%;
-padding:14px;
-border:none;
-border-radius:10px;
-font-size:16px;
-cursor:pointer;
-transition:0.25s;
-}
-.btn-red{
-background:#e6304c;
-color:#fff;
-}
-.btn-gray{
-background:#ccc;
-color:#777;
-cursor:not-allowed;
-}
-.load-text{
-text-align:center;
-color:#888;
-margin:12px 0;
-display:none;
-}
-.result{
-width:100%;
-min-height:90px;
-border-left:4px solid #e6304c;
-padding:16px;
-background:#fff;
-border-radius:10px;
-line-height:1.8;
-color:#333;
-white-space:pre-line;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>AI智能菜谱助手</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui;
+        }
+        body {
+            background-color: #ffeef0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+        }
+        h1 {
+            text-align: center;
+            color: #d62840;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .card {
+            background: #fef2f4;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        .title-tip {
+            color: #d62840;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #f8c8d0;
+            border-radius: 8px;
+            font-size: 15px;
+            min-height: 80px;
+            margin-bottom: 14px;
+            background: #fff;
+            resize: none;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background-color: #d62840;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background: #bbb;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
-<div class="box">
-<h1>🔍 AI 智能菜谱助手</h1>
-<div class="card">
-<div class="tit">✨输入菜名，AI教你做菜</div>
-<textarea id="dishInput" placeholder="输入菜名，例如：辣椒炒肉">辣椒炒肉</textarea>
-<button id="btn1" class="btn-red" onclick="getDish()">生成完整菜谱</button>
-<div class="load-text" id="load1">AI 正在生成菜谱...</div>
-<div class="result" id="res1"></div>
-</div>
-<div class="card">
-<div class="tit">✨输入剩食材，AI帮你搭配</div>
-<textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、西红柿、土豆、豆腐">鸡蛋、西红柿、土豆、豆腐</textarea>
-<button id="btn2" class="btn-red" onclick="getMatch()">AI 智能搭配菜品</button>
-<div class="load-text" id="load2">AI 正在搭配菜谱...</div>
-<div class="result" id="res2"></div>
-</div>
+<div class="container">
+    <h1>🔍 AI 智能菜谱助手</h1>
+
+    <div class="card">
+        <div class="title-tip">✨输入菜名，AI教你做菜</div>
+        <textarea id="dishInput" placeholder="输入菜名，例如：辣椒炒肉"></textarea>
+        <button id="btn1" onclick="getDish()">生成完整菜谱</button>
+        <textarea id="res1" readonly></textarea>
+    </div>
+
+    <div class="card">
+        <div class="title-tip">✨输入剩食材，AI帮你搭配</div>
+        <textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、西红柿、土豆、豆腐"></textarea>
+        <button id="btn2" onclick="getMatch()">AI 智能搭配菜品</button>
+        <textarea id="res2" readonly></textarea>
+    </div>
 </div>
 
 <script>
-// ==========这里替换成你Railway复制的完整域名地址==========
 const BACKEND_URL = "https://wuyanzu-production-84fa.up.railway.app/api/getRecipe";
-// ======================================================
 
-async function getDish(){
-  const name = dishInput.value.trim();
-  if(!name){alert("请输入菜名");return;}
-  load1.style.display = "block";
-  res1.innerText = "";
-  btn1.className = "btn-gray";
-  btn1.disabled = true;
-  const prompt = `你是资深家常菜厨师，给厨房新手讲解【${name}】完整做法，严格分4块：1菜品简介 2精准食材用量 3分步操作 4烹饪小贴士，语言简单易懂。`;
-  try {
-    const res = await fetch(BACKEND_URL, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ prompt })
-    })
-    const data = await res.json();
-    res1.innerText = data.success ? data.data : "生成失败："+data.msg;
-  } catch (e) {
-    res1.innerText = "无法连接后端，请检查Railway服务是否启动";
-  }
-  load1.style.display = "none";
-  btn1.className = "btn-red";
-  btn1.disabled = false;
+async function getDish() {
+    const name = document.getElementById("dishInput").value.trim();
+    if (!name) {
+        alert("请输入菜名");
+        return;
+    }
+    const btn = document.getElementById("btn1");
+    const out = document.getElementById("res1");
+    btn.disabled = true;
+    out.value = "AI 正在生成菜谱...";
+    try {
+        const res = await fetch(BACKEND_URL, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({prompt:`你是资深家常菜厨师，给我详细讲解【${name}】完整做法，严格分4块：1菜品简介 2精准食材用量 3分步操作 4烹饪小贴士，语言简单易懂。`})
+        });
+        const data = await res.json();
+        if(data.success){
+            out.value = data.data;
+        }else{
+            out.value = "生成失败：" + data.msg;
+        }
+    }catch(e){
+        out.value = "无法连接后端，请检查Railway服务是否启动";
+    }
+    btn.disabled = false;
 }
 
-async function getMatch(){
-  const mat = matInput.value.trim();
-  if(!mat){alert("请输入家里现有的食材");return;}
-  load2.style.display = "block";
-  res2.innerText = "";
-  btn2.className = "btn-gray";
-  btn2.disabled = true;
-  const prompt = `我家里只有这些食材：${mat}，不许额外采购食材，推荐2-3道家常菜，每道菜写清食材分配+完整步骤，适合新手。`;
-  try {
-    const res = await fetch(BACKEND_URL, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ prompt })
-    })
-    const data = await res.json();
-    res2.innerText = data.success ? data.data : "搭配失败："+data.msg;
-  } catch (e) {
-    res2.innerText = "无法连接后端，请检查Railway服务是否启动";
-  }
-  load2.style.display = "none";
-  btn2.className = "btn-red";
-  btn2.disabled = false;
+async function getMatch() {
+    const mat = document.getElementById("matInput").value.trim();
+    if (!mat) {
+        alert("请输入食材");
+        return;
+    }
+    const btn = document.getElementById("btn2");
+    const out = document.getElementById("res2");
+    btn.disabled = true;
+    out.value = "AI 正在搭配菜品...";
+    try {
+        const res = await fetch(BACKEND_URL, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({prompt:`现有食材：${mat}，根据这些食材推荐3道家常菜，包含详细做法。`})
+        });
+        const data = await res.json();
+        if(data.success){
+            out.value = data.data;
+        }else{
+            out.value = "生成失败：" + data.msg;
+        }
+    }catch(e){
+        out.value = "无法连接后端，请检查Railway服务是否启动";
+    }
+    btn.disabled = false;
 }
 </script>
 </body>
