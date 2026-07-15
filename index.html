@@ -17,24 +17,21 @@ button{width:100%;padding:18px;border:none;border-radius:14px;background:#d4263e
 button:hover:not(:disabled){background:#b61f33;transform:translateY(-3px);box-shadow:0 6px 16px rgba(212,38,62,0.28)}
 button:active:not(:disabled){transform:translateY(0)}
 button:disabled{background:#d6a3ab;cursor:not-allowed;transform:none;box-shadow:none}
-.img-box{width:100%;min-height:200px;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#999;overflow:hidden;margin-bottom:18px}
-.img-box img{width:100%;height:auto;display:block}
 </style>
 </head>
 <body>
 <div class="wrap">
 <h1>🔍 AI 智能菜谱助手</h1>
 <div class="box">
-<span class="label">✨输入菜名，AI生成菜谱+菜品实拍图</span>
+<span class="label">✨输入菜名，AI生成完整菜谱</span>
 <textarea id="dishInput" placeholder="输入菜名，例如：红烧肉、辣椒炒肉"></textarea>
-<button id="btn1" onclick="getDish()">生成完整菜谱+菜品图片</button>
-<div class="img-box" id="imgBox1">暂无菜品图片</div>
+<button id="btn1" onclick="getDish()">生成菜谱</button>
 <textarea id="res1" readonly></textarea>
 </div>
 <div class="box">
 <span class="label">✨输入食材，AI自动搭配家常菜</span>
 <textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、五花肉、土豆"></textarea>
-<button id="btn2" onclick="getMatch()">AI 智能搭配菜品</button>
+<button id="btn2" onclick="getMatch()">智能搭配菜品</button>
 <textarea id="res2" readonly></textarea>
 </div>
 </div>
@@ -45,38 +42,22 @@ async function getDish(){
     if(!dishName){alert("请输入菜名");return;}
     const btn = document.getElementById("btn1");
     const resText = document.getElementById("res1");
-    const imgWrap = document.getElementById("imgBox1");
     btn.disabled = true;
     resText.value = "AI正在撰写菜谱，请稍候...";
-    imgWrap.innerHTML = "正在生成菜品图片...";
     try{
-        const recipeResp = await fetch(`${BASE_API}/getRecipe`,{
+        const resp = await fetch(`${BASE_API}/getRecipe`,{
             method:"POST",
             headers:{"Content-Type":"application/json"},
             body:JSON.stringify({prompt:`你是专业家常菜厨师，详细讲解【${dishName}】完整做法，分四点输出：1菜品简介 2食材分量 3分步操作 4烹饪小贴士，语言简洁易懂。`})
         });
-        const recipeData = await recipeResp.json();
-        if(!recipeData.success){
-            resText.value = recipeData.msg;
-            imgWrap.innerHTML = "图片生成失败";
-            btn.disabled = false;
-            return;
-        }
-        resText.value = recipeData.data;
-        const imgResp = await fetch(`${BASE_API}/getImage`,{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({prompt:dishName})
-        });
-        const imgData = await imgResp.json();
-        if(imgData.success){
-            imgWrap.innerHTML = `<img src="${imgData.imgUrl}" alt="${dishName}菜品图">`;
+        const data = await resp.json();
+        if(data.success){
+            resText.value = data.data;
         }else{
-            imgWrap.innerHTML = "图片生成失败，菜谱已生成完成";
+            resText.value = data.msg;
         }
     }catch(err){
         resText.value = "网络请求失败，请稍后重试";
-        imgWrap.innerHTML = "图片加载异常";
     }
     btn.disabled = false;
 }
