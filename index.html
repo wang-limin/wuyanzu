@@ -71,18 +71,17 @@
 
     <div class="card">
         <div class="title-tip">✨输入菜名，AI教你做菜</div>
-        <!-- value="" 彻底清空默认文字，仅保留占位提示 -->
-        <textarea id="dishInput" value="" placeholder="输入菜名，例如：辣椒炒肉"></textarea>
+        <!-- 修复textarea清空写法，中间无任何文字 -->
+        <textarea id="dishInput" placeholder="输入菜名，例如：辣椒炒肉"></textarea>
         <button id="btn1" onclick="getDish()">生成完整菜谱</button>
-        <textarea id="res1" readonly value=""></textarea>
+        <textarea id="res1" readonly></textarea>
     </div>
 
     <div class="card">
         <div class="title-tip">✨输入剩食材，AI帮你搭配</div>
-        <!-- value="" 无默认文字 -->
-        <textarea id="matInput" value="" placeholder="输入家里现有食材：鸡蛋、西红柿、土豆、豆腐"></textarea>
+        <textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、西红柿、土豆、豆腐"></textarea>
         <button id="btn2" onclick="getMatch()">AI 智能搭配菜品</button>
-        <textarea id="res2" readonly value=""></textarea>
+        <textarea id="res2" readonly></textarea>
     </div>
 </div>
 
@@ -109,7 +108,7 @@ async function getDish() {
         if(data.success){
             out.value = data.data;
         }else{
-            out.value = "生成失败：" + data.msg;
+            out.value = "生成失败：" + (data.msg || "未知错误");
         }
     }catch(e){
         out.value = "无法连接后端，请检查Railway服务是否启动";
@@ -137,7 +136,7 @@ async function getMatch() {
         if(data.success){
             out.value = data.data;
         }else{
-            out.value = "生成失败：" + data.msg;
+            out.value = "生成失败：" + (data.msg || "未知错误");
         }
     }catch(e){
         out.value = "无法连接后端，请检查Railway服务是否启动";
