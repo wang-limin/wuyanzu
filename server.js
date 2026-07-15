@@ -10,8 +10,8 @@ const port = process.env.PORT || 3000;
 
 app.use(express.static(__dirname));
 
-// 这里必须填完整、无空格、有效sk密钥
-const ZHIPU_API_KEY = "sk-在这里粘贴你智谱平台复制的完整密钥";
+// 填入你的智谱完整sk密钥
+const ZHIPU_API_KEY = "sk-5c107e2bbf3b4a70a9bbaf1db9c0aa37.IU6v0vwsKpFi8xyk";
 
 app.post("/api/getRecipe", async (req, res) => {
     const { prompt } = req.body;
@@ -28,8 +28,8 @@ app.post("/api/getRecipe", async (req, res) => {
             success: true,
             data: result.data.choices[0].message.content
         });
-    } catch (err)
-        // 关键修复：err?.message 防止undefined
+    } catch (err) {
+        // 全部代码放进{}内部，修复语法报错
         const msg = err?.message || "接口请求异常，请检查API密钥";
         res.json({
             success: false,
