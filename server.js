@@ -9,7 +9,7 @@ app.use(express.json());
 const port = process.env.PORT || 3000;
 
 app.use(express.static(__dirname));
-const ZHIPU_API_KEY = "sk-替换成你的完整菜谱密钥";
+const ZHIPU_API_KEY = "sk-5c107e2bbf3b4a70a9bbaf1db9c0aa37.IU6v0vwsKpFi8xyk";
 
 app.post("/api/getRecipe", async (req, res) => {
     const { prompt } = req.body;
