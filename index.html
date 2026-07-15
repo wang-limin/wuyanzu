@@ -94,7 +94,6 @@ white-space:pre-line;
 <body>
 <div class="box">
 <h1>🔍 AI 智能菜谱助手</h1>
-<!-- 菜名做菜 -->
 <div class="card">
 <div class="tit">✨输入菜名，AI教你做菜</div>
 <textarea id="dishInput" placeholder="输入菜名，例如：辣椒炒肉">辣椒炒肉</textarea>
@@ -102,7 +101,6 @@ white-space:pre-line;
 <div class="load-text" id="load1">AI 正在生成菜谱...</div>
 <div class="result" id="res1"></div>
 </div>
-<!-- 食材搭配 -->
 <div class="card">
 <div class="tit">✨输入剩食材，AI帮你搭配</div>
 <textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、西红柿、土豆、豆腐">鸡蛋、西红柿、土豆、豆腐</textarea>
@@ -113,108 +111,53 @@ white-space:pre-line;
 </div>
 
 <script>
-// 备用稳定免费AI接口，双重兜底
-async function aiChat(msg) {
-  const urls = [
-    `https://api.zhizengzeng.com/v1/chat?prompt=${encodeURIComponent(msg)}`,
-    `https://api.vvhan.com/api/ai/chat?msg=${encodeURIComponent(msg)}`
-  ]
-  for(let url of urls){
-    try {
-      let res = await fetch(url);
-      let data = await res.json();
-      if(data.data || data.content) return data.data || data.content;
-    }catch(e){
-      continue;
-    }
-  }
-  // 接口全部失效时，自动切换本地模拟菜谱兜底
-  return null;
-}
+// ==========这里替换成你Railway复制的完整域名地址==========
+const BACKEND_URL = "https://xxx.up.railway.app/api/getRecipe";
+// ======================================================
 
-// 1. 根据菜名生成教程
 async function getDish(){
-  let name = dishInput.value.trim();
+  const name = dishInput.value.trim();
   if(!name){alert("请输入菜名");return;}
   load1.style.display = "block";
   res1.innerText = "";
   btn1.className = "btn-gray";
   btn1.disabled = true;
-
-  let prompt = `你是资深家常菜厨师，给新手讲解${name}，严格分四段：菜品简介、精准食材用量、分步详细制作步骤、烹饪小贴士，语言简单易懂`;
-  let aiResult = await aiChat(prompt);
-
-  // AI接口失效，启用本地预制菜谱兜底，保证一定出内容
-  if(!aiResult){
-    const localDish = {
-      "辣椒炒肉":`【菜品简介】香辣下饭的经典家常菜，肉质鲜嫩，配米饭绝佳
-【所需食材】猪肉250g、青椒3个、小米辣2根、大蒜3瓣、生抽2勺、老抽半勺、淀粉1勺、盐少许、食用油
-【详细步骤】
-1.猪肉切薄片，加生抽、淀粉抓匀腌制10分钟；青椒、小米辣切斜段，大蒜切片
-2.热锅倒油，下入肉片大火滑炒至变色盛出备用
-3.底油爆香蒜片和小米辣，倒入青椒翻炒至微微起虎皮
-4.倒回肉片，加少许老抽上色、盐调味，大火翻炒15秒即可出锅
-【烹饪小贴士】肉片腌制时加少许食用油，炒制不易粘连；全程大火爆炒口感更香`,
-      "西红柿炒鸡蛋":`【菜品简介】国民家常快手菜，酸甜开胃，做法简单
-【所需食材】西红柿2个、鸡蛋3枚、小葱、盐、白糖半勺、食用油
-【详细步骤】
-1.西红柿切块，小葱切葱花，鸡蛋加少许盐打散
-2.热油倒入蛋液，定型炒散盛出
-3.锅中少油放入西红柿按压炒出汤汁，加白糖中和酸味
-4.倒入鸡蛋翻炒均匀，加盐调味，撒葱花出锅
-【烹饪小贴士】想要汤汁多可以盖锅盖焖1分钟`
-    }
-    aiResult = localDish[name] || `【${name}】简易家常做法
-1.准备主料辅料清洗切配；
-2.热锅起油先炒肉类；
-3.下配菜大火翻炒调味；
-4.熟透即可出锅。
-小贴士：咸淡根据口味调整盐、糖`;
+  const prompt = `你是资深家常菜厨师，给厨房新手讲解【${name}】完整做法，严格分4块：1菜品简介 2精准食材用量 3分步操作 4烹饪小贴士，语言简单易懂。`;
+  try {
+    const res = await fetch(BACKEND_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ prompt })
+    })
+    const data = await res.json();
+    res1.innerText = data.success ? data.data : "生成失败："+data.msg;
+  } catch (e) {
+    res1.innerText = "无法连接后端，请检查Railway服务是否启动";
   }
-  res1.innerText = aiResult;
   load1.style.display = "none";
   btn1.className = "btn-red";
   btn1.disabled = false;
 }
 
-// 2. 食材搭配菜谱
 async function getMatch(){
-  let mat = matInput.value.trim();
-  if(!mat){alert("请输入食材");return;}
+  const mat = matInput.value.trim();
+  if(!mat){alert("请输入家里现有的食材");return;}
   load2.style.display = "block";
   res2.innerText = "";
   btn2.className = "btn-gray";
   btn2.disabled = true;
-
-  let prompt = `我家里只有这些食材：${mat}，不用额外采购食材，推荐2-3道家常菜，每道菜写明食材用量、完整制作步骤，适合厨房新手`;
-  let aiResult = await aiChat(prompt);
-
-  // AI失效本地兜底
-  if(!aiResult){
-    const localMatch = {
-      "鸡蛋、西红柿、土豆、豆腐":`搭配1：西红柿炒鸡蛋
-食材：西红柿、鸡蛋
-步骤：西红柿炒出汤汁，炒好鸡蛋混合调味，酸甜快手。
-
-搭配2：酸辣土豆丝
-食材：土豆
-步骤：土豆切丝泡水去淀粉，热油大火快炒，加醋盐调味。
-
-搭配3：红烧嫩豆腐
-食材：豆腐、少许生抽
-步骤：豆腐焯水，调酱汁焖煮勾芡，清淡下饭。
-
-搭配4：土豆西红柿蛋汤
-食材：土豆、西红柿、鸡蛋
-步骤：西红柿炒出汤汁，土豆煮软，淋入蛋液煮开即可`
-    }
-    aiResult = localMatch[mat] || `现有食材可制作菜品参考：
-1.两种蔬菜清炒；
-2.豆制品红烧/煮汤；
-3.鸡蛋搭配蔬菜炒制；
-全部做法简单，无需额外调料`;
+  const prompt = `我家里只有这些食材：${mat}，不许额外采购食材，推荐2-3道家常菜，每道菜写清食材分配+完整步骤，适合新手。`;
+  try {
+    const res = await fetch(BACKEND_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ prompt })
+    })
+    const data = await res.json();
+    res2.innerText = data.success ? data.data : "搭配失败："+data.msg;
+  } catch (e) {
+    res2.innerText = "无法连接后端，请检查Railway服务是否启动";
   }
-  res2.innerText = aiResult;
   load2.style.display = "none";
   btn2.className = "btn-red";
   btn2.disabled = false;
