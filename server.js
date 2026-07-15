@@ -9,10 +9,8 @@ app.use(express.json());
 const port = process.env.PORT || 3000;
 
 app.use(express.static(__dirname));
-// 这里粘贴你完整的智谱sk密钥，前后不能有空格
-const ZHIPU_API_KEY = "sk-5c107e2bbf3b4a70a9bbaf1db9c0aa37.IU6v0vwsKpFi8xyk";
+const ZHIPU_API_KEY = "sk-替换成你的完整菜谱密钥";
 
-// 生成文字菜谱接口
 app.post("/api/getRecipe", async (req, res) => {
     const { prompt } = req.body;
     try {
@@ -31,27 +29,6 @@ app.post("/api/getRecipe", async (req, res) => {
     } catch (err)
         const msg = err?.message || "接口异常";
         res.json({ success: false, msg: "AI生成失败：" + msg });
-    }
-});
-
-// 文生图接口
-app.post("/api/getImage", async (req, res) => {
-    const { prompt } = req.body;
-    try {
-        const imgResult = await axios.post(
-            "https://open.bigmodel.cn/api/paas/v4/images/generations",
-            {
-                model: "cogview-3-flash",
-                prompt: `高清美食摄影，一盘${prompt}，家常实拍，柔和自然光，8k超清`
-            },
-            { headers: { Authorization: `Bearer ${ZHIPU_API_KEY}` } }
-        );
-        res.json({
-            success: true,
-            imgUrl: imgResult.data.data[0].url
-        });
-    } catch (err)
-        res.json({ success: false, msg: "菜品图生成失败" });
     }
 });
 
