@@ -1,168 +1,261 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI智能菜谱助手</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
-        }
-        body {
-            background: linear-gradient(145deg, #fff5f7, #ffe1e6);
-            padding: 60px 16px;
-            min-height: 100vh;
-        }
-        .wrap {
-            max-width: 540px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 26px;
-            box-shadow: 0 10px 35px rgba(212, 38, 62, 0.14);
-        }
-        h1 {
-            text-align: center;
-            color: #d4263e;
-            font-size: 28px;
-            margin-bottom: 40px;
-            letter-spacing: 1px;
-        }
-        .box {
-            background: #fef1f3;
-            border-radius: 20px;
-            padding: 28px;
-            margin-bottom: 32px;
-        }
-        .label {
-            color: #d4263e;
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 16px;
-            display: block;
-        }
-        textarea {
-            width: 100%;
-            border: 1px solid #f2bdc4;
-            border-radius: 14px;
-            padding: 18px;
-            font-size: 16px;
-            min-height: 95px;
-            background: #fff;
-            resize: none;
-            margin-bottom: 18px;
-            transition: all 0.24s ease;
-        }
-        textarea:focus {
-            outline: none;
-            border-color: #d4263e;
-            box-shadow: 0 0 0 3px rgba(212, 38, 62, 0.1);
-        }
-        button {
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 14px;
-            background: #d4263e;
-            color: #fff;
-            font-size: 17px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.24s ease;
-        }
-        button:hover:not(:disabled) {
-            background: #b61f33;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(212, 38, 62, 0.28);
-        }
-        button:active:not(:disabled) {
-            transform: translateY(0);
-        }
-        button:disabled {
-            background: #d6a3ab;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI智能菜谱助手</title>
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:system-ui,"Microsoft YaHei";
+}
+body{
+    background:#ffeef2;
+    padding:40px 16px;
+    min-height:100vh;
+}
+.container{
+    max-width:520px;
+    margin:0 auto;
+}
+.card{
+    background:#fff;
+    border-radius:20px;
+    padding:30px 24px;
+    margin-bottom:24px;
+}
+.title-main{
+    text-align:center;
+    color:#d6304a;
+    font-size:26px;
+    margin-bottom:30px;
+}
+.sub-title{
+    color:#d6304a;
+    font-size:16px;
+    margin-bottom:14px;
+}
+input,textarea{
+    width:100%;
+    border:1px solid #f8c8d2;
+    border-radius:12px;
+    padding:16px;
+    font-size:15px;
+    background:#fff;
+    margin-bottom:16px;
+}
+textarea{
+    min-height:120px;
+    resize:none;
+}
+input:focus,textarea:focus{
+    outline:none;
+    border-color:#d6304a;
+}
+.btn-red{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:12px;
+    background:#d6304a;
+    color:#fff;
+    font-size:16px;
+    cursor:pointer;
+}
+.btn-red:disabled{
+    background:#e88899;
+    cursor:not-allowed;
+}
+.btn-small{
+    width:auto;
+    padding:8px 16px;
+    background:#999;
+    margin:6px;
+}
+.switch-row{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    margin:16px 0;
+}
+.switch-tip{
+    text-align:center;
+    margin-top:16px;
+    color:#666;
+}
+.switch-tip span{
+    color:#d6304a;
+    cursor:pointer;
+}
+.page{
+    display:none;
+}
+.page.active{
+    display:block;
+}
+</style>
 </head>
 <body>
-<div class="wrap">
-    <h1>🔍 AI 智能菜谱助手</h1>
-
-    <div class="box">
-        <span class="label">✨输入菜名，AI教你做菜</span>
-        <textarea id="dishInput" placeholder="输入菜名，例如：红烧肉、辣椒炒肉"></textarea>
-        <button id="btn1" onclick="getDish()">生成完整菜谱</button>
-        <textarea id="res1" readonly></textarea>
+<div class="container">
+    <!-- 界面1：登录 -->
+    <div id="pageLogin" class="page active">
+        <h1 class="title-main">🔍 AI 智能菜谱助手</h1>
+        <div class="card">
+            <div class="sub-title">账号登录</div>
+            <input type="text" id="loginUser" placeholder="输入用户名">
+            <input type="password" id="loginPwd" placeholder="输入密码">
+            <button class="btn-red" onclick="login()">登录</button>
+            <div class="switch-tip">没有账号？<span onclick="showPage('register')">去注册</span></div>
+        </div>
     </div>
 
-    <div class="box">
-        <span class="label">✨输入食材，AI自动搭配菜品</span>
-        <textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、五花肉、土豆"></textarea>
-        <button id="btn2" onclick="getMatch()">AI 智能搭配菜品</button>
-        <textarea id="res2" readonly></textarea>
+    <!-- 界面2：注册 -->
+    <div id="pageRegister" class="page">
+        <h1 class="title-main">🔍 AI 智能菜谱助手</h1>
+        <div class="card">
+            <div class="sub-title">新用户注册</div>
+            <input type="text" id="regUser" placeholder="设置用户名">
+            <input type="password" id="regPwd" placeholder="设置密码">
+            <input type="password" id="regPwd2" placeholder="确认密码">
+            <button class="btn-red" onclick="register()">完成注册</button>
+            <div class="switch-tip">已有账号？<span onclick="showPage('login')">去登录</span></div>
+        </div>
+    </div>
+
+    <!-- 界面3：菜名生成菜谱 -->
+    <div id="pageDish" class="page">
+        <div class="switch-row">
+            <button class="btn-red btn-small" onclick="showPage('dish')">菜名做菜</button>
+            <button class="btn-red btn-small" onclick="showPage('material')">食材搭配</button>
+            <button class="btn-red btn-small" onclick="logout()">退出</button>
+        </div>
+        <h1 class="title-main">🔍 AI 智能菜谱助手</h1>
+        <div class="card">
+            <div class="sub-title">✨输入菜名，AI教你做菜</div>
+            <textarea id="dishInput" placeholder="输入菜名，例如：红烧肉、辣椒炒肉"></textarea>
+            <button class="btn-red" id="btnDish" onclick="genDish()">生成完整菜谱</button>
+            <textarea id="dishResult" readonly placeholder="菜谱内容会展示在这里..."></textarea>
+        </div>
+    </div>
+
+    <!-- 界面4：食材搭配菜品 -->
+    <div id="pageMaterial" class="page">
+        <div class="switch-row">
+            <button class="btn-red btn-small" onclick="showPage('dish')">菜名做菜</button>
+            <button class="btn-red btn-small" onclick="showPage('material')">食材搭配</button>
+            <button class="btn-red btn-small" onclick="logout()">退出</button>
+        </div>
+        <h1 class="title-main">🔍 AI 智能菜谱助手</h1>
+        <div class="card">
+            <div class="sub-title">✨输入食材，AI自动搭配菜品</div>
+            <textarea id="matInput" placeholder="输入家里现有食材：鸡蛋、五花肉、土豆"></textarea>
+            <button class="btn-red" id="btnMat" onclick="genMat()">AI智能搭配菜品</button>
+            <textarea id="matResult" readonly placeholder="搭配结果会展示在这里..."></textarea>
+        </div>
     </div>
 </div>
 
 <script>
-const BACKEND_URL = "https://wuyanzu-production-84fa.up.railway.app/api/getRecipe";
+const BASE_API = "https://wuyanzu-production-84fa.up.railway.app/api";
+// 全部页面容器
+const pageLogin = document.getElementById("pageLogin");
+const pageRegister = document.getElementById("pageRegister");
+const pageDish = document.getElementById("pageDish");
+const pageMaterial = document.getElementById("pageMaterial");
 
-async function getDish() {
-    const name = document.getElementById("dishInput").value.trim();
-    if (!name) {
-        alert("请输入菜名");
-        return;
+// 切换页面
+function showPage(type) {
+    pageLogin.classList.remove("active");
+    pageRegister.classList.remove("active");
+    pageDish.classList.remove("active");
+    pageMaterial.classList.remove("active");
+    switch(type) {
+        case "login": pageLogin.classList.add("active"); break;
+        case "register": pageRegister.classList.add("active"); break;
+        case "dish": pageDish.classList.add("active"); break;
+        case "material": pageMaterial.classList.add("active"); break;
     }
-    const btn = document.getElementById("btn1");
-    const out = document.getElementById("res1");
+}
+
+// 初始化登录状态
+window.onload = function() {
+    const loginState = localStorage.getItem("isLogin");
+    if(loginState === "true") showPage("dish");
+}
+
+// 注册
+function register() {
+    const user = document.getElementById("regUser").value.trim();
+    const pwd = document.getElementById("regPwd").value.trim();
+    const pwd2 = document.getElementById("regPwd2").value.trim();
+    if(!user || !pwd || !pwd2) return alert("所有输入框不能为空");
+    if(pwd !== pwd2) return alert("两次密码不一致");
+    localStorage.setItem("acc_"+user, pwd);
+    alert("注册成功，请登录");
+    showPage("login");
+}
+
+// 登录
+function login() {
+    const user = document.getElementById("loginUser").value.trim();
+    const pwd = document.getElementById("loginPwd").value.trim();
+    const savePwd = localStorage.getItem("acc_"+user);
+    if(!user || !pwd) return alert("请填写账号密码");
+    if(savePwd !== pwd) return alert("账号或密码错误");
+    localStorage.setItem("isLogin", "true");
+    alert("登录成功");
+    showPage("dish");
+}
+
+// 退出登录
+function logout() {
+    localStorage.removeItem("isLogin");
+    alert("已退出登录");
+    showPage("login");
+}
+
+// 根据菜名生成菜谱
+async function genDish() {
+    const name = document.getElementById("dishInput").value.trim();
+    const btn = document.getElementById("btnDish");
+    const resBox = document.getElementById("dishResult");
+    if(!name) return alert("请输入菜名");
     btn.disabled = true;
-    out.value = "AI 正在生成详细菜谱，请稍候...";
+    resBox.value = "AI正在生成菜谱...";
     try {
-        const res = await fetch(BACKEND_URL, {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({prompt:`你是专业家常菜厨师，详细讲解【${name}】完整做法，分四点清晰输出：1菜品简介 2食材分量 3详细步骤 4烹饪小贴士，文字简洁易懂。`})
+        const resp = await fetch(`${BASE_API}/getRecipe`, {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({prompt:`你是专业家常菜厨师，详细讲解【${name}】完整做法，分四点输出：1菜品简介 2食材分量 3分步操作 4烹饪小贴士，语言简洁易懂。`})
         });
-        const data = await res.json();
-        if(data.success){
-            out.value = data.data;
-        }else{
-            out.value = "生成失败：" + (data.msg || "未知错误");
-        }
-    }catch(e){
-        out.value = "无法连接后端，请稍后重试";
+        const data = await resp.json();
+        resBox.value = data.success ? data.data : data.msg;
+    } catch(err) {
+        resBox.value = "网络请求失败，请稍后重试";
     }
     btn.disabled = false;
 }
 
-async function getMatch() {
-    const mat = document.getElementById("matInput").value.trim();
-    if (!mat) {
-        alert("请输入现有的食材");
-        return;
-    }
-    const btn = document.getElementById("btn2");
-    const out = document.getElementById("res2");
+// 根据食材搭配菜品
+async function genMat() {
+    const food = document.getElementById("matInput").value.trim();
+    const btn = document.getElementById("btnMat");
+    const resBox = document.getElementById("matResult");
+    if(!food) return alert("请输入食材");
     btn.disabled = true;
-    out.value = "AI 正在搭配家常菜，请稍候...";
+    resBox.value = "AI正在搭配菜品...";
     try {
-        const res = await fetch(BACKEND_URL, {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({prompt:`现有食材：${mat}，推荐3道简单家常菜，附带完整详细做法。`})
+        const resp = await fetch(`${BASE_API}/getRecipe`, {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({prompt:`现有食材：${food}，推荐3道简单家常菜，附带完整详细做法。`})
         });
-        const data = await res.json();
-        if(data.success){
-            out.value = data.data;
-        }else{
-            out.value = "生成失败：" + (data.msg || "未知错误");
-        }
-    }catch(e){
-        out.value = "无法连接后端，请稍后重试";
+        const data = await resp.json();
+        resBox.value = data.success ? data.data : data.msg;
+    } catch(err) {
+        resBox.value = "网络请求失败，请稍后重试";
     }
     btn.disabled = false;
 }
